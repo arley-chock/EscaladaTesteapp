@@ -1,0 +1,95 @@
+﻿@page "/Usuarios/edit"
+
+@using Microsoft.EntityFrameworkCore
+@using Escalada.API.Model
+@inject IDbContextFactory<Escalada.API.Data.ApplicationDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit</h1>
+
+<h4>Usuario</h4>
+<hr />
+@if (Usuario is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="Usuario" OnValidSubmit="UpdateUsuario" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                <input type="hidden" name="Usuario.Id" value="@Usuario.Id" />
+                <div class="mb-3">
+                    <label for="nome" class="form-label">Nome:</label>
+                    <InputText id="nome" @bind-Value="Usuario.Nome" class="form-control" />
+                    <ValidationMessage For="() => Usuario.Nome" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email:</label>
+                    <InputText id="email" @bind-Value="Usuario.Email" class="form-control" />
+                    <ValidationMessage For="() => Usuario.Email" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/usuarios">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    public int Id { get; set; }
+
+    [SupplyParameterFromForm]
+    public Usuario? Usuario { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        Usuario ??= await context.Usuario.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (Usuario is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more details, see https://aka.ms/RazorPagesCRUD.
+    public async Task UpdateUsuario()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Attach(Usuario!).State = EntityState.Modified;
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!UsuarioExists(Usuario!.Id))
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/usuarios");
+    }
+
+    bool UsuarioExists(int id)
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.Usuario.Any(e => e.Id == id);
+    }
+}

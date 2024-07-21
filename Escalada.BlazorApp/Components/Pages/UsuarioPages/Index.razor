@@ -1,0 +1,26 @@
+﻿@page "/usuarios"
+
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using Escalada.API.Model
+@inject IDbContextFactory<Escalada.API.Data.ApplicationDbContext> DbFactory
+
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="usuarios/create" class="btn btn-success">Criar</a>
+</p>
+
+<QuickGrid Class="table" Items="DbFactory.CreateDbContext().Usuario">
+    <PropertyColumn Property="usuario => usuario.Nome" />
+    <PropertyColumn Property="usuario => usuario.Email" />
+
+    <TemplateColumn Context="usuario">
+        <a href="@($"usuarios/edit?id={usuario.Id}")" class="btn btn-warning">Editar</a> |
+        <a href="@($"usuarios/details?id={usuario.Id}")" class="btn btn-info">Detalhe</a> |
+        <a href="@($"usuarios/delete?id={usuario.Id}")" class="btn alert-danger">Excluir</a>
+    </TemplateColumn>
+</QuickGrid>
