@@ -4,6 +4,7 @@
 @using Escalada.API.Model
 @inject IDbContextFactory<Escalada.API.Data.ApplicationDbContext> DbFactory
 @inject NavigationManager NavigationManager
+@inject UsuarioService usuarioservice
 
 <PageTitle>Edit</PageTitle>
 
@@ -29,6 +30,11 @@ else
                     <ValidationMessage For="() => Usuario.Nome" class="text-danger" />
                 </div>
                 <div class="mb-3">
+                    <label for="Sobrennome" class="form-label">Sobrenome:</label>
+                    <InputText id="Sobrenome" @bind-Value="Usuario.Sobrenome" class="form-control" />
+                    <ValidationMessage For="() => Usuario.Sobrenome" class="text-danger" />
+                </div>
+                <div class="mb-3">
                     <label for="email" class="form-label">Email:</label>
                     <InputText id="email" @bind-Value="Usuario.Email" class="form-control" />
                     <ValidationMessage For="() => Usuario.Email" class="text-danger" />
@@ -52,12 +58,19 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        using var context = DbFactory.CreateDbContext();
-        Usuario ??= await context.Usuario.FirstOrDefaultAsync(m => m.Id == Id);
-
-        if (Usuario is null)
+        try
         {
-            NavigationManager.NavigateTo("notfound");
+            Usuario ??= await usuarioservice.GetUsuarioByIdAsync(Id);
+
+            if (Usuario is null)
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+        }
+        catch (Exception ex)
+        {
+            // Handle exception (e.g., log and navigate to an error page)
+            NavigationManager.NavigateTo("error");
         }
     }
 
@@ -65,16 +78,22 @@ else
     // For more details, see https://aka.ms/RazorPagesCRUD.
     public async Task UpdateUsuario()
     {
-        using var context = DbFactory.CreateDbContext();
-        context.Attach(Usuario!).State = EntityState.Modified;
-
         try
         {
-            await context.SaveChangesAsync();
+            if (Usuario != null)
+            {
+                var success = await usuarioservice.UpdateUsuarioAsync(Usuario);
+
+                if (!success)
+                {
+                    NavigationManager.NavigateTo("error");
+                    return;
+                }
+            }
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (!UsuarioExists(Usuario!.Id))
+            if (!await UsuarioExists(Usuario!.Id))
             {
                 NavigationManager.NavigateTo("notfound");
             }
@@ -87,9 +106,16 @@ else
         NavigationManager.NavigateTo("/usuarios");
     }
 
-    bool UsuarioExists(int id)
+    private async Task<bool> UsuarioExists(int id)
     {
-        using var context = DbFactory.CreateDbContext();
-        return context.Usuario.Any(e => e.Id == id);
+        try
+        {
+            var usuario = await usuarioservice.GetUsuarioByIdAsync(id);
+            return usuario != null;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
     }
 }

@@ -1,5 +1,4 @@
-﻿
-using Escalada.API.Model;
+﻿using Escalada.API.Model;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -33,12 +32,30 @@ public class UsuarioService
         }
     }
 
+    public async Task<Usuario> GetUsuarioByIdAsync(int id)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync($"api/usuarios/{id}");
+            response.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadFromJsonAsync<Usuario>();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Erro ao carregar o usuário com ID: {id}");
+            throw new ApplicationException($"Erro ao carregar o usuário: {ex.Message}");
+        }
+    }
+
     public async Task<bool> AddUsuarioAsync(Usuario usuarioModel)
     {
-        var usuario = new Usuario() { 
-        Email = usuarioModel.Email,
-        Nome = usuarioModel.Nome,
-        Id = usuarioModel.Id       
+        var usuario = new Usuario()
+        {
+            Email = usuarioModel.Email,
+            Nome = usuarioModel.Nome,
+            Sobrenome = usuarioModel.Sobrenome,
+            Id = usuarioModel.Id
         };
 
         return await SendUsuarioRequestAsync(HttpMethod.Post, "api/usuarios", usuario);
@@ -50,6 +67,7 @@ public class UsuarioService
         {
             Email = usuarioModel.Email,
             Nome = usuarioModel.Nome,
+            Sobrenome = usuarioModel.Sobrenome,
             Id = usuarioModel.Id
         };
         return await SendUsuarioRequestAsync(HttpMethod.Put, $"api/usuarios/{usuario.Id}", usuario);

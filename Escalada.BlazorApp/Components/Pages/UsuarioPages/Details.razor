@@ -1,9 +1,7 @@
 ﻿@page "/usuarios/details"
-
-@using Microsoft.EntityFrameworkCore
 @using Escalada.API.Model
-@inject IDbContextFactory<Escalada.API.Data.ApplicationDbContext> DbFactory
 @inject NavigationManager NavigationManager
+@inject UsuarioService usuarioservice
 
 <PageTitle>Details</PageTitle>
 
@@ -16,15 +14,17 @@
     {
         <p><em>Loading...</em></p>
     }
-    else {
+    else
+    {
         <dl class="row">
             <dt class="col-sm-2">Nome</dt>
             <dd class="col-sm-10">@usuario.Nome</dd>
+            <dt class="col-sm-2">Sobrenome</dt>
+            <dd class="col-sm-10">@usuario.Sobrenome</dd>
             <dt class="col-sm-2">Email</dt>
             <dd class="col-sm-10">@usuario.Email</dd>
         </dl>
         <div>
-            <a href="@($"/usuarios/edit?id={usuario.Id}")">Edit</a> |
             <a href="@($"/usuarios")">Back to List</a>
         </div>
     }
@@ -38,12 +38,19 @@
 
     protected override async Task OnInitializedAsync()
     {
-        using var context = DbFactory.CreateDbContext();
-        usuario = await context.Usuario.FirstOrDefaultAsync(m => m.Id == Id);
-
-        if (usuario is null)
+        try
         {
-            NavigationManager.NavigateTo("notfound");
+            usuario = await usuarioservice.GetUsuarioByIdAsync(Id);
+
+            if (usuario is null)
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+        }
+        catch (Exception ex)
+        {
+           
+            NavigationManager.NavigateTo("error");
         }
     }
 }

@@ -4,6 +4,7 @@
 @using Escalada.API.Model
 @inject IDbContextFactory<Escalada.API.Data.ApplicationDbContext> DbFactory
 @inject NavigationManager NavigationManager
+@inject  UsuarioService usuarioservice
 
 <PageTitle>Create</PageTitle>
 
@@ -20,7 +21,12 @@
                 <label for="nome" class="form-label">Nome:</label> 
                 <InputText id="nome" @bind-Value="Usuario.Nome" class="form-control" /> 
                 <ValidationMessage For="() => Usuario.Nome" class="text-danger" /> 
-            </div>        
+            </div>
+            <div class="mb-3">
+                <label for="nome" class="form-label">Sobrenome:</label>
+                <InputText id="nome" @bind-Value="Usuario.Sobrenome" class="form-control" />
+                <ValidationMessage For="() => Usuario.Sobrenome" class="text-danger" />
+            </div>
             <div class="mb-3">
                 <label for="email" class="form-label">Email:</label> 
                 <InputText id="email" @bind-Value="Usuario.Email" class="form-control" /> 
@@ -43,9 +49,7 @@
     // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
     public async Task AddUsuario()
     {
-        using var context = DbFactory.CreateDbContext();
-        context.Usuario.Add(Usuario);
-        await context.SaveChangesAsync();
+       await usuarioservice.AddUsuarioAsync(Usuario);
         NavigationManager.NavigateTo("/usuarios");
     }
 }
