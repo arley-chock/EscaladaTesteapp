@@ -14,6 +14,9 @@ namespace Escalada.API.Model
         public string Sobrenome { get; set; }
 
         [Required]
+        public string Telefone { get; set; }
+
+        [Required]
         [EmailAddress(ErrorMessage = "Invalid Email Address")]
         public string Email { get; set; }
     }

@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 public class UsuarioService
 {
     private readonly HttpClient _httpClient;
-    private readonly ILogger<UsuarioService> _logger; // Added for logging
+    private readonly ILogger<UsuarioService> _logger; 
 
     public UsuarioService(HttpClient httpClient, ILogger<UsuarioService> logger)
     {
         _httpClient = httpClient;
-        _logger = logger; // Initialize logger
+        _logger = logger; 
     }
 
     public async Task<List<Usuario>> GetUsuariosAsync()
@@ -21,13 +21,13 @@ public class UsuarioService
         try
         {
             var response = await _httpClient.GetAsync("api/usuarios");
-            response.EnsureSuccessStatusCode(); // Throw an exception if the request failed
+            response.EnsureSuccessStatusCode(); 
 
             return await response.Content.ReadFromJsonAsync<List<Usuario>>();
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Erro ao carregar os usuários"); // Log the error
+            _logger.LogError(ex, "Erro ao carregar os usuários"); 
             throw new ApplicationException($"Erro ao carregar os usuários: {ex.Message}");
         }
     }
@@ -55,6 +55,7 @@ public class UsuarioService
             Email = usuarioModel.Email,
             Nome = usuarioModel.Nome,
             Sobrenome = usuarioModel.Sobrenome,
+            Telefone = usuarioModel.Telefone,
             Id = usuarioModel.Id
         };
 
@@ -68,6 +69,7 @@ public class UsuarioService
             Email = usuarioModel.Email,
             Nome = usuarioModel.Nome,
             Sobrenome = usuarioModel.Sobrenome,
+            Telefone= usuarioModel.Telefone,
             Id = usuarioModel.Id
         };
         return await SendUsuarioRequestAsync(HttpMethod.Put, $"api/usuarios/{usuario.Id}", usuario);
@@ -86,7 +88,7 @@ public class UsuarioService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Erro ao excluir o usuário com ID: {id}"); // Log the error with ID
+            _logger.LogError(ex, $"Erro ao excluir o usuário com ID: {id}"); 
             throw new ApplicationException($"Erro ao excluir o usuário: {ex.Message}");
         }
     }
@@ -109,7 +111,7 @@ public class UsuarioService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Erro ao processar a requisição de usuário para: {url}"); // Log the error with URL
+            _logger.LogError(ex, $"Erro ao processar a requisição de usuário para: {url}"); 
             throw new ApplicationException($"Erro ao processar a requisição de usuário: {ex.Message}");
         }
     }

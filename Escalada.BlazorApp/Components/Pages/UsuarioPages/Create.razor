@@ -31,7 +31,12 @@
                 <label for="email" class="form-label">Email:</label> 
                 <InputText id="email" @bind-Value="Usuario.Email" class="form-control" /> 
                 <ValidationMessage For="() => Usuario.Email" class="text-danger" /> 
-            </div>        
+            </div> 
+            <div class="mb-3">
+                <label for="telefone" class="form-label">Telefone:</label>
+                <InputText id="telefone" @bind-Value="Usuario.Telefone" class="form-control" />
+                <ValidationMessage For="() => Usuario.Telefone" class="text-danger" />
+            </div>
             <button type="submit" class="btn btn-primary">Create</button>
         </EditForm>
     </div>
@@ -46,7 +51,7 @@
     [SupplyParameterFromForm]
     public Usuario Usuario { get; set; } = new();
 
-    // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
+  
     public async Task AddUsuario()
     {
        await usuarioservice.AddUsuarioAsync(Usuario);

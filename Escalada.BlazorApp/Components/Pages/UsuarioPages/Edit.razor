@@ -2,7 +2,6 @@
 
 @using Microsoft.EntityFrameworkCore
 @using Escalada.API.Model
-@inject IDbContextFactory<Escalada.API.Data.ApplicationDbContext> DbFactory
 @inject NavigationManager NavigationManager
 @inject UsuarioService usuarioservice
 
@@ -39,6 +38,11 @@ else
                     <InputText id="email" @bind-Value="Usuario.Email" class="form-control" />
                     <ValidationMessage For="() => Usuario.Email" class="text-danger" />
                 </div>
+                <div class="mb-3">
+                    <label for="telefone" class="form-label">Telefone:</label>
+                    <InputText id="telefone" @bind-Value="Usuario.Telefone" class="form-control" />
+                    <ValidationMessage For="() => Usuario.Telefone" class="text-danger" />
+                </div>
                 <button type="submit" class="btn btn-primary">Save</button>
             </EditForm>
         </div>
@@ -69,13 +73,12 @@ else
         }
         catch (Exception ex)
         {
-            // Handle exception (e.g., log and navigate to an error page)
+          
             NavigationManager.NavigateTo("error");
         }
     }
 
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see https://aka.ms/RazorPagesCRUD.
+  
     public async Task UpdateUsuario()
     {
         try

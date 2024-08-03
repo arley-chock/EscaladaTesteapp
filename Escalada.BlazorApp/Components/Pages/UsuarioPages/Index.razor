@@ -22,6 +22,7 @@ else
         <PropertyColumn TGridItem="Usuario" TProp="string" Property="usuario => usuario.Nome" Title="Nome" />
         <PropertyColumn TGridItem="Usuario" TProp="string" Property="usuario => usuario.Sobrenome" Title="Sobrenome" />
         <PropertyColumn TGridItem="Usuario" TProp="string" Property="usuario => usuario.Email" Title="Email" />
+        <PropertyColumn TGridItem="Usuario" TProp="string" Property="usuario => usuario.Telefone" Title="Telefone" />
 
         <TemplateColumn TGridItem="Usuario" Context="usuario">
             <a href="@($"usuarios/edit?id={usuario.Id}")" class="btn btn-warning">Editar</a> |
